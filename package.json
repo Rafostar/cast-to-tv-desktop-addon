@@ -1,0 +1,25 @@
+{
+  "name": "cast-to-tv-desktop-addon",
+  "description": "Desktop streaming support for GNOME Shell Extension Cast to TV.",
+  "author": "Rafostar",
+  "license": "GPL-2.0",
+  "dependencies": {
+    "gstreamer-recorder": "0.0.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rafostar/cast-to-tv-desktop-addon.git"
+  },
+  "keywords": [
+    "gnome-shell-extension",
+    "chromecast",
+    "media",
+    "video",
+    "stream",
+    "cast"
+  ],
+  "bugs": {
+    "url": "https://github.com/Rafostar/cast-to-tv-desktop-addon/issues"
+  },
+  "homepage": "https://github.com/Rafostar/cast-to-tv-desktop-addon"
+}

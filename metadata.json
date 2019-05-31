@@ -1,0 +1,16 @@
+{
+  "description": "Desktop streaming support for GNOME Shell Extension Cast to TV.\n\nCast to TV extension must be installed before any add-ons.\nAfter enabling this add-on go to Cast Settings -> Modules and click \"Install npm modules\" button.\n\nPlease use GitHub to report issues.", 
+  "extension-id": "cast-to-tv-desktop-addon", 
+  "gettext-domain": "cast-to-tv-desktop-addon", 
+  "name": "Cast to TV - Desktop Stream Add-on", 
+  "settings-schema": "org.gnome.shell.extensions.cast-to-tv-desktop-addon", 
+  "shell-version": [
+    "3.26", 
+    "3.28", 
+    "3.30", 
+    "3.32"
+  ], 
+  "url": "https://github.com/Rafostar/cast-to-tv-desktop-addon", 
+  "uuid": "cast-to-tv-desktop-addon@rafostar.github.com", 
+  "version": 1
+}
