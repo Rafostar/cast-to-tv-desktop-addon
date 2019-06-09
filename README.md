@@ -12,6 +12,8 @@ AFTER TRYING PLEASE SHARE YOUR RESULTS [HERE](https://github.com/Rafostar/gnome-
   * plugins-bad
   * plugins-ugly
 
+Currently works only on X11 session with screen resolution 1920x1080 exactly.
+
 ### Fedora
 Having enabled rpm fusion repos run:
 ```
