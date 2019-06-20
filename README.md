@@ -17,8 +17,7 @@ Currently works only on X11 session with screen resolution 1920x1080 exactly.
 ### Fedora
 Having enabled rpm fusion repos run:
 ```
-sudo dnf install gstreamer1 gstreamer1-plugins-base gstreamer1-plugins-good \
-  gstreamer1-plugins-bad-free gstreamer1-plugins-ugly
+sudo dnf install gstreamer1 gstreamer1-plugins-{base,good,bad-free,ugly}
 ```
 
 ## Installation
