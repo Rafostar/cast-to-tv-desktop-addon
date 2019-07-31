@@ -5,10 +5,9 @@ const Gettext = imports.gettext.domain(Local.metadata['gettext-domain']);
 const _ = Gettext.gettext;
 const extensionsPath = Local.path.substring(0, Local.path.lastIndexOf('/'));
 const mainPath = extensionsPath + '/cast-to-tv@rafostar.github.com';
-imports.searchPath.unshift(mainPath);
 const shared = imports.shared.module.exports;
 
-var addonMenuItem = class linkMenu extends PopupMenu.PopupImageMenuItem
+var addonMenuItem = class desktopMenu extends PopupMenu.PopupImageMenuItem
 {
 	constructor()
 	{

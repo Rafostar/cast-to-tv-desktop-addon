@@ -8,11 +8,11 @@ const GLib = imports.gi.GLib;
 const Main = imports.ui.main;
 const Gettext = imports.gettext;
 const Local = imports.misc.extensionUtils.getCurrentExtension();
-const Widget = Local.imports.widget;
 const extensionsPath = Local.path.substring(0, Local.path.lastIndexOf('/'));
 const mainPath = extensionsPath + '/cast-to-tv@rafostar.github.com';
-const localePath = mainPath + '/locale_addons/cast-to-tv-desktop-addon';
+
 imports.searchPath.unshift(mainPath);
+const Widget = Local.imports.widget;
 const Addons = imports.addons;
 
 let castMenu;
@@ -21,7 +21,7 @@ let timeout;
 
 function init()
 {
-	Gettext.bindtextdomain(Local.metadata['gettext-domain'], localePath);
+	Gettext.bindtextdomain(Local.metadata['gettext-domain'], Local.path + '/locale');
 }
 
 function enable()
@@ -39,13 +39,17 @@ function enable()
 				addonMenuItem = new Widget.addonMenuItem();
 				castMenu.castSubMenu.menu.addMenuItem(addonMenuItem);
 
-				if(typeof castMenu.isServiceEnabled !== 'undefined')
-				{
-					if(castMenu.isServiceEnabled === false) addonMenuItem.actor.hide();
+				if(	typeof castMenu.isServiceEnabled !== 'undefined'
+					&& castMenu.isServiceEnabled === false
+				) {
+					addonMenuItem.actor.hide();
 				}
 
-				if(typeof castMenu.serviceMenuItem !== 'undefined') Addons.setLastMenuItem(castMenu, castMenu.serviceMenuItem);
-				if(typeof castMenu.settingsMenuItem !== 'undefined') Addons.setLastMenuItem(castMenu, castMenu.settingsMenuItem);
+				if(typeof castMenu.serviceMenuItem !== 'undefined')
+					Addons.setLastMenuItem(castMenu, castMenu.serviceMenuItem);
+
+				if(typeof castMenu.settingsMenuItem !== 'undefined')
+					Addons.setLastMenuItem(castMenu, castMenu.settingsMenuItem);
 			}
 
 			return GLib.SOURCE_REMOVE;
@@ -55,7 +59,8 @@ function enable()
 
 function disable()
 {
-	if(timeout) GLib.source_remove(timeout);
+	if(timeout)
+		GLib.source_remove(timeout);
 
 	if(addonMenuItem)
 	{
@@ -64,7 +69,8 @@ function disable()
 		let lockingScreen = (Main.sessionMode.currentMode == 'unlock-dialog'
 			|| Main.sessionMode.currentMode == 'lock-screen');
 
-		if(!lockingScreen && castMenu) Addons.setLastMenuItem(castMenu, addonMenuItem);
+		if(!lockingScreen && castMenu)
+			Addons.setLastMenuItem(castMenu, addonMenuItem);
 
 		addonMenuItem.destroy();
 	}
