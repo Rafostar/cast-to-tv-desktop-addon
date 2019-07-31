@@ -4,7 +4,7 @@
   "author": "Rafostar",
   "license": "GPL-2.0",
   "dependencies": {
-    "gstreamer-recorder": "0.0.1"
+    "gstreamer-recorder": "^0.2.0"
   },
   "repository": {
     "type": "git",
