@@ -2,14 +2,8 @@ var net = require('net');
 var gstRecorder = require('gstreamer-recorder');
 var recorder = new gstRecorder({ output: 'server', audio: { encoder: 'lamemp3enc' }});
 
-var config;
-var selection;
-
-exports.handleSelection = function(selectionContents, configContents)
+exports.handleSelection = function(selection, config)
 {
-	config = configContents;
-	selection = selectionContents;
-
 	var devices = recorder.getAudioDevices(true);
 	var audioSrc = 'cast_to_tv.monitor';
 
@@ -19,13 +13,11 @@ exports.handleSelection = function(selectionContents, configContents)
 		recorder.opts.audio.device = null;
 
 	recorder.opts.server.port = config.listeningPort + 1;
+	recorder.opts.video = { ...recorder.opts.video, ...selection.desktop };
 }
 
 exports.closeStream = function()
 {
-	config = null;
-	selection = null;
-
 	stopRecording();
 }
 
