@@ -33,11 +33,9 @@ class DesktopSettings extends Gtk.Grid
 		label = new SettingLabel(_("Video resolution"));
 		widget = new Gtk.ComboBoxText({ halign: Gtk.Align.END });
 		widget.append('copy', _("Same as desktop"));
-		/* TRANSLATORS: %s will represent value like 1080p */
-		let scaleText = _("Scale to %s");
-		widget.append('1080p', scaleText.replace('%s', '1080p'));
-		widget.append('720p', scaleText.replace('%s', '720p'));
-		widget.append('540p', scaleText.replace('%s', '540p'));
+		widget.append('1080p', '1920x1080');
+		widget.append('720p', '1280x720');
+		widget.append('540p', '960x540');
 		Settings.bind('desktop-resolution', widget, 'active-id', Gio.SettingsBindFlags.DEFAULT);
 		this.attach(label, 0, 1, 1, 1);
 		this.attach(widget, 1, 1, 1, 1);
@@ -57,7 +55,7 @@ class DesktopSettings extends Gtk.Grid
 		label = new SettingLabel(_("Bitrate (Mbps)"));
 		widget = new Gtk.SpinButton({halign:Gtk.Align.END, digits:1});
 		widget.set_sensitive(true);
-		widget.set_range(2.0, 10.0);
+		widget.set_range(1.0, 10.0);
 		widget.set_value(Settings.get_double('desktop-bitrate'));
 		widget.set_increments(0.1, 0.2);
 		Settings.bind('desktop-bitrate', widget, 'value', Gio.SettingsBindFlags.DEFAULT);
