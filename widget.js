@@ -54,8 +54,9 @@ var addonMenuItem = class desktopMenu extends PopupMenu.PopupImageMenuItem
 
 			let selection = {
 				addon: 'DESKTOP',
+				/* TRANSLATORS: Title of the stream, shown on Chromecast and GNOME remote widget */
 				title: _("Desktop Stream"),
-				streamType: 'VIDEO_ENCODE',
+				streamType: 'LIVE',
 				filePath: 'none',
 				desktop: videoParams
 			};
