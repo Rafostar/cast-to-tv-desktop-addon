@@ -2,7 +2,6 @@
 Desktop streaming support for GNOME Shell Extension Cast to TV.
 
 ### WORK IN PROGRESS. NOT STABLE YET!
-AFTER TRYING PLEASE SHARE YOUR RESULTS [HERE](https://github.com/Rafostar/gnome-shell-extension-cast-to-tv/issues/5).
 
 ## Requirements
 * [Cast to TV](https://github.com/Rafostar/gnome-shell-extension-cast-to-tv) (version 9 or later)
