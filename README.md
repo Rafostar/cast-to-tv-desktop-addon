@@ -2,17 +2,16 @@
 Desktop streaming support for GNOME Shell Extension Cast to TV.
 
 ### WORK IN PROGRESS. NOT STABLE YET!
-AFTER TRYING PLEASE SHARE YOUR RESULTS [HERE](https://github.com/Rafostar/gnome-shell-extension-cast-to-tv/issues/5).
 
 ## Requirements
-* [Cast to TV](https://github.com/Rafostar/gnome-shell-extension-cast-to-tv) (version 9 or later)
+* [Cast to TV](https://github.com/Rafostar/gnome-shell-extension-cast-to-tv) (version 10 or later)
 * [GStreamer-1.0](https://gstreamer.freedesktop.org) with its plugins:
   * plugins-base
   * plugins-good
   * plugins-bad
   * plugins-ugly
 
-Currently works only on X11 session with screen resolution 1920x1080 exactly.
+Currently works only on X11 session.
 
 ### Fedora
 Having enabled rpm fusion repos run:
