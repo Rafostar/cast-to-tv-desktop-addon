@@ -1,26 +1,34 @@
-const { GLib } = imports.gi;
 const PopupMenu = imports.ui.popupMenu;
 const Local = imports.misc.extensionUtils.getCurrentExtension();
 const Gettext = imports.gettext.domain(Local.metadata['gettext-domain']);
 const _ = Gettext.gettext;
-const extensionsPath = Local.path.substring(0, Local.path.lastIndexOf('/'));
-const mainPath = extensionsPath + '/cast-to-tv@rafostar.github.com';
+
+const EXTENSIONS_PATH = Local.path.substring(0, Local.path.lastIndexOf('/'));
+const MAIN_PATH = EXTENSIONS_PATH + '/cast-to-tv@rafostar.github.com';
+
+/* Imports from main extension */
+imports.searchPath.unshift(MAIN_PATH);
+const Helper = imports.helper;
 const shared = imports.shared.module.exports;
-const Settings = imports.helper.getSettings(Local.path, Local.metadata['settings-schema']);
+imports.searchPath.shift();
+
+const Settings = Helper.getSettings(Local.path, Local.metadata['settings-schema']);
+/* TRANSLATORS: Title of the stream, shown on Chromecast and GNOME remote widget */
+const TITLE = _("Desktop Stream");
 
 var addonMenuItem = class desktopMenu extends PopupMenu.PopupImageMenuItem
 {
 	constructor()
 	{
 		super(_("Desktop"), 'user-desktop-symbolic');
+
+		this.isDesktopStream = true;
 		this.connect('activate', () =>
 		{
-			/* Close other possible opened windows */
-			GLib.spawn_command_line_async('pkill -SIGINT -f ' + mainPath + '/file-chooser|' +
-				extensionsPath + '/cast-to-tv-.*-addon@rafostar.github.com/app');
+			Helper.closeOtherApps(MAIN_PATH);
 
-			let list = ['none'];
-			GLib.file_set_contents(shared.listPath, JSON.stringify(list, null, 1));
+			let list = [ TITLE ];
+			Helper.writeToFile(shared.listPath, list);
 
 			let videoSetting = Settings.get_string('desktop-resolution');
 			let videoParams = {};
@@ -54,18 +62,13 @@ var addonMenuItem = class desktopMenu extends PopupMenu.PopupImageMenuItem
 
 			let selection = {
 				addon: 'DESKTOP',
-				/* TRANSLATORS: Title of the stream, shown on Chromecast and GNOME remote widget */
-				title: _("Desktop Stream"),
+				title: TITLE,
 				streamType: 'LIVE',
-				filePath: 'none',
+				filePath: TITLE,
 				desktop: videoParams
 			};
-			GLib.file_set_contents(shared.selectionPath, JSON.stringify(selection, null, 1));
-		});
-	}
 
-	destroy()
-	{
-		super.destroy();
+			Helper.writeToFile(shared.selectionPath, selection);
+		});
 	}
 }

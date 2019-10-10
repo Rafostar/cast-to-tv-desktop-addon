@@ -4,31 +4,30 @@ Developer: Rafostar
 Extension GitHub: https://github.com/Rafostar/cast-to-tv-desktop-addon
 */
 const Local = imports.misc.extensionUtils.getCurrentExtension();
-const extensionsPath = Local.path.substring(0, Local.path.lastIndexOf('/'));
-const mainPath = extensionsPath + '/cast-to-tv@rafostar.github.com';
+const Widget = Local.imports.widget;
+
+const EXTENSIONS_PATH = Local.path.substring(0, Local.path.lastIndexOf('/'));
+const MAIN_PATH = EXTENSIONS_PATH + '/cast-to-tv@rafostar.github.com';
+const GETTEXT_DOMAIN = Local.metadata['gettext-domain'];
+const EXTENSION_ID = Local.metadata['extension-id'];
 
 /* Imports from main extension */
-imports.searchPath.unshift(mainPath);
-const Widget = Local.imports.widget;
+imports.searchPath.unshift(MAIN_PATH);
 const Addons = imports.addons;
 const Helper = imports.helper;
 imports.searchPath.shift();
 
-const gettextDomain = Local.metadata['gettext-domain'];
-const extensionId = Local.metadata['extension-id'];
-const delay = 2000;
-
 function init()
 {
-	Helper.initTranslations(Local.path, gettextDomain);
+	Helper.initTranslations(Local.path, GETTEXT_DOMAIN);
 }
 
 function enable()
 {
-	Addons.enableAddon(extensionId, Widget, delay);
+	Addons.enableAddon(EXTENSION_ID, Widget);
 }
 
 function disable()
 {
-	Addons.disableAddon(extensionId);
+	Addons.disableAddon(EXTENSION_ID);
 }

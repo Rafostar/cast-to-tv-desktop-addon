@@ -1,19 +1,26 @@
+imports.gi.versions.Gtk = '3.0';
+
 const { Gio, Gtk } = imports.gi;
 const Local = imports.misc.extensionUtils.getCurrentExtension();
-const Gettext = imports.gettext;
-const GettextDomain = Gettext.domain(Local.metadata['gettext-domain']);
-const _ = GettextDomain.gettext;
-const extensionsPath = Local.path.substring(0, Local.path.lastIndexOf('/'));
-const mainPath = extensionsPath + '/cast-to-tv@rafostar.github.com';
 
-imports.searchPath.unshift(mainPath);
+const EXTENSIONS_PATH = Local.path.substring(0, Local.path.lastIndexOf('/'));
+const LOCAL_PATH = EXTENSIONS_PATH + '/cast-to-tv-desktop-addon@rafostar.github.com';
+const MAIN_PATH = EXTENSIONS_PATH + '/cast-to-tv@rafostar.github.com';
+
+/* Imports from main extension */
+imports.searchPath.unshift(MAIN_PATH);
 const { SettingLabel } = imports.prefs_shared;
 const Helper = imports.helper;
-const Settings = Helper.getSettings(Local.path, Local.metadata['settings-schema']);
+imports.searchPath.shift();
+
+const Metadata = Helper.readFromFile(LOCAL_PATH + '/metadata.json');
+const Settings = Helper.getSettings(LOCAL_PATH, Metadata['settings-schema']);
+const Gettext = imports.gettext.domain(Metadata['gettext-domain']);
+const _ = Gettext.gettext;
 
 function init()
 {
-	Helper.initTranslations(Local.path, Local.metadata['gettext-domain']);
+	Helper.initTranslations(LOCAL_PATH, Metadata['gettext-domain']);
 }
 
 class DesktopSettings extends Gtk.Grid
@@ -61,11 +68,6 @@ class DesktopSettings extends Gtk.Grid
 		Settings.bind('desktop-bitrate', widget, 'value', Gio.SettingsBindFlags.DEFAULT);
 		this.attach(label, 0, 3, 1, 1);
 		this.attach(widget, 1, 3, 1, 1);
-	}
-
-	destroy()
-	{
-		super.destroy();
 	}
 }
 
