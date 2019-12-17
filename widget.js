@@ -64,6 +64,7 @@ var addonMenuItem = class desktopMenu extends PopupMenu.PopupImageMenuItem
 				addon: 'DESKTOP',
 				title: TITLE,
 				streamType: 'LIVE',
+				hlsStream: true,
 				filePath: TITLE,
 				desktop: videoParams
 			};
