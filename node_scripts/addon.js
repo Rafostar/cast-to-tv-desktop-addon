@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const { spawn } = require('child_process');
 const gstRecorder = require('gstreamer-recorder');
+const debug = require('debug')('desktop-addon');
 const noop = () => {};
 
 const MAIN_EXT_PATH = path.join(__dirname + '/../../cast-to-tv@rafostar.github.com');
@@ -56,19 +57,20 @@ module.exports =
 	{
 		stopRecording(err =>
 		{
-			if(err) return;
+			if(err) return debug(err);
 
-			if(fs.existsSync(recorder.opts.file.dir))
+			fs.access(recorder.opts.file.dir, fs.constants.F_OK, (err) =>
 			{
+				if(err) return debug(err);
+
 				fs.readdir(recorder.opts.file.dir, (err, files) =>
 				{
-					if(!err)
-					{
-						files.forEach(file => fs.unlinkSync(recorder.opts.file.dir + '/' + file));
-						fs.rmdir(recorder.opts.file.dir, () => {});
-					}
+					if(err) return debug(err);
+
+					files.forEach(file => fs.unlinkSync(recorder.opts.file.dir + '/' + file));
+					fs.rmdir(recorder.opts.file.dir, () => {});
 				});
-			}
+			});
 		});
 	},
 
@@ -85,7 +87,11 @@ module.exports =
 
 			recorder.start(err =>
 			{
-				if(err) return res.sendStatus(404);
+				if(err)
+				{
+					debug(err);
+					return res.sendStatus(404);
+				}
 
 				isStreaming = true;
 				/* Give time for playlist to fill itself */
