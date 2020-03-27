@@ -6,6 +6,8 @@ const _ = Gettext.gettext;
 const EXTENSIONS_PATH = Local.path.substring(0, Local.path.lastIndexOf('/'));
 const MAIN_PATH = EXTENSIONS_PATH + '/cast-to-tv@rafostar.github.com';
 
+const gstConfig = Local.imports.gst_config.config;
+
 /* Imports from main extension */
 imports.searchPath.unshift(MAIN_PATH);
 const Helper = imports.helper;
@@ -18,6 +20,9 @@ const Settings = Helper.getSettings(Local.path, Local.metadata['settings-schema'
 /* TRANSLATORS: Title of the stream, shown on Chromecast and GNOME remote widget */
 const TITLE = _("Desktop Stream");
 
+
+const { GLib, Shell } = imports.gi;
+
 var addonMenuItem = class desktopMenu extends PopupMenu.PopupImageMenuItem
 {
 	constructor()
@@ -26,60 +31,37 @@ var addonMenuItem = class desktopMenu extends PopupMenu.PopupImageMenuItem
 
 		this.listeningPortSignal = null;
 		this.isDesktopStream = true;
+
+		let castRecorder = null;
+
+		GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT, 5, () =>
+		{
+			castRecorder = new Shell.Recorder({
+				stage: global.stage,
+				screen: global.screen
+				//display: global.display
+			});
+
+			return false;
+		});
+
 		this.connect('activate', () =>
 		{
 			Helper.closeOtherApps(MAIN_PATH);
 
-			let videoSetting = Settings.get_string('desktop-resolution');
-			let videoParams = {};
+			castRecorder.set_pipeline(gstConfig);
 
-			switch(videoSetting)
+			let [success, fileName] = castRecorder.record();
+
+			log('RECORDER ON_START: ' + castRecorder.is_recording());
+			log('RECORDER FILENAME: ' + fileName);
+
+			this.timeout = GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT, 30, () =>
 			{
-				case '1080p':
-					videoParams.width = 1920;
-					videoParams.height = 1080;
-					videoParams.scaling = true;
-					break;
-				case '720p':
-					videoParams.width = 1280;
-					videoParams.height = 720;
-					videoParams.scaling = true;
-					break;
-				case '540p':
-					videoParams.width = 960;
-					videoParams.height = 540;
-					videoParams.scaling = true;
-					break;
-				default:
-					videoParams.width = 0;
-					videoParams.height = 0;
-					videoParams.scaling = false;
-					break;
-			}
+				castRecorder.close();
+				log('RECORDER ON_END: ' + castRecorder.is_recording());
 
-			videoParams.fps = Settings.get_int('desktop-fps');
-			videoParams.mbps = Settings.get_double('desktop-bitrate').toFixed(1);
-
-			let selection = {
-				addon: 'DESKTOP',
-				title: TITLE,
-				streamType: 'LIVE',
-				hlsStream: true,
-				filePath: TITLE,
-				desktop: videoParams
-			};
-
-			if(!Soup.client)
-			{
-				Soup.createClient(CastSettings.get_int('listening-port'));
-				this.listeningPortSignal = CastSettings.connect('changed::listening-port', () =>
-					Soup.client.setNodePort(CastSettings.get_int('listening-port'))
-				);
-			}
-
-			Soup.client.postPlaybackData({
-				playlist: [ TITLE ],
-				selection: selection
+				return false;
 			});
 		});
 
