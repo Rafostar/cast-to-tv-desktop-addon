@@ -9,6 +9,7 @@ const _ = Gettext.gettext;
 /* TRANSLATORS: Title of the stream, shown on Chromecast and GNOME remote widget */
 const TITLE = _("Desktop Stream");
 const SINK_NAME = 'cast_to_tv';
+const PACMD_PATH = GLib.find_program_in_path('pacmd');
 const PACMD_INIT = ['load-module', 'module-null-sink', 'sink_name=cast_to_tv'];
 const PACMD_PROPS = [
 	'update-sink-proplist', SINK_NAME,
@@ -54,7 +55,7 @@ class CastDesktopRecorder extends Shell.Recorder
 				this._setSink(hadErr =>
 				{
 					if(hadErr)
-						return log('Cast to TV: Set audio sink error');
+						return log('Cast to TV: set audio sink error');
 
 					this._finishStartRecord();
 				});
@@ -64,7 +65,7 @@ class CastDesktopRecorder extends Shell.Recorder
 				this._prepareCast(hadErr =>
 				{
 					if(hadErr)
-						return log('Cast to TV: Prepare desktop cast error');
+						return log('Cast to TV: prepare desktop cast error');
 
 					this._finishStartRecord();
 				});
@@ -84,17 +85,24 @@ class CastDesktopRecorder extends Shell.Recorder
 
 		Indicator.visible = true;
 
-		let selection = {
-			addon: 'DESKTOP',
-			title: _(TITLE),
-			streamType: 'LIVE',
-			hlsStream: true,
-			filePath: _(TITLE)
-		};
+		/* Wait until at least two playlist items appear */
+		GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT, 5, () =>
+		{
+			if(!this.is_recording() || this.destroyed)
+				return this.stopRecord();
 
-		this._imports.soupClient.postPlaybackData({
-			playlist: [ selection.filePath ],
-			selection: selection
+			let selection = {
+				addon: 'DESKTOP',
+				title: _(TITLE),
+				streamType: 'LIVE',
+				hlsStream: true,
+				filePath: _(TITLE)
+			};
+
+			this._imports.soupClient.postPlaybackData({
+				playlist: [ selection.filePath ],
+				selection: selection
+			});
 		});
 	}
 
@@ -105,8 +113,9 @@ class CastDesktopRecorder extends Shell.Recorder
 
 		this._restoreAudioSink(hadErr =>
 		{
-			if(hadErr) log('Cast to TV: Cannot restore previous audio device');
+			if(hadErr) log('Cast to TV: cannot restore previous audio device');
 		});
+
 		Indicator.visible = false;
 	}
 
@@ -218,7 +227,7 @@ class CastDesktopRecorder extends Shell.Recorder
 	_pacmdSpawn(command, cb)
 	{
 		let proc = Gio.Subprocess.new(
-			['pacmd'].concat(command), Gio.SubprocessFlags.NONE
+			[PACMD_PATH].concat(command), Gio.SubprocessFlags.NONE
 		);
 
 		proc.wait_async(null, (self, task) =>
@@ -276,7 +285,7 @@ class CastDesktopRecorder extends Shell.Recorder
 		let output = '';
 
 		let [res, pid, stdin, stdout, stderr] = GLib.spawn_async_with_pipes(
-			'/usr/bin', ['pacmd', 'list-sinks'], null, 0, null
+			null, [PACMD_PATH, 'list-sinks'], null, 0, null
 		);
 
 		let stream = new Gio.DataInputStream({
@@ -319,5 +328,6 @@ class CastDesktopRecorder extends Shell.Recorder
 	destroy()
 	{
 		this.stopRecord();
+		this.destroyed = true;
 	}
 });
