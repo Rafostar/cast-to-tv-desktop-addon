@@ -1,16 +1,16 @@
 <schemalist gettext-domain="cast-to-tv-desktop-addon">
   <schema id="org.gnome.shell.extensions.cast-to-tv-desktop-addon" path="/org/gnome/shell/extensions/cast-to-tv-desktop-addon/">
-    <key name="desktop-resolution" type="s">
-      <default>"copy"</default>
-      <summary>Scale recorded video resolution before streaming</summary>
-    </key>
-    <key name="desktop-fps" type="i">
+    <key name="framerate" type="i">
       <default>30</default>
       <summary>Video recording FPS</summary>
     </key>
-    <key name="desktop-bitrate" type="d">
-      <default>4.0</default>
+    <key name="video-bitrate" type="d">
+      <default>2.0</default>
       <summary>Video encoding bitrate</summary>
+    </key>
+    <key name="draw-cursor" type="b">
+      <default>true</default>
+      <summary>Show cursor on recording</summary>
     </key>
   </schema>
 </schemalist>

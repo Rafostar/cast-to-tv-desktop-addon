@@ -4,7 +4,7 @@ Developer: Rafostar
 Extension GitHub: https://github.com/Rafostar/cast-to-tv-desktop-addon
 */
 const Local = imports.misc.extensionUtils.getCurrentExtension();
-const Widget = Local.imports.widget;
+const { AddonMenuItem } = Local.imports.widget;
 
 const EXTENSIONS_PATH = Local.path.substring(0, Local.path.lastIndexOf('/'));
 const MAIN_PATH = EXTENSIONS_PATH + '/cast-to-tv@rafostar.github.com';
@@ -24,7 +24,7 @@ function init()
 
 function enable()
 {
-	Addons.enableAddon(EXTENSION_ID, Widget);
+	Addons.enableAddon(EXTENSION_ID, AddonMenuItem);
 }
 
 function disable()
