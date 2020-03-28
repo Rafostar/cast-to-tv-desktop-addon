@@ -6,15 +6,16 @@ Desktop streaming support for GNOME Shell Extension Cast to TV.
 ## Comparison with Chrome desktop streaming
 * Pros:
   * Streams with audio
-  * Works on Wayland (wip)
+  * Works on Wayland
   * Customizable video bitrate and fps
+  * Option to show/hide mouse cursor
 * Cons:
   * High delay
   * High cpu usage (no hardware acceleration yet)
 
 ## Requirements
 * [Cast to TV](https://github.com/Rafostar/gnome-shell-extension-cast-to-tv) (latest git master)
-* [GStreamer-1.0](https://gstreamer.freedesktop.org) with `gst-launch-1.0` binary and its plugins:
+* [GStreamer-1.0](https://gstreamer.freedesktop.org) plugins:
   * plugins-base
   * plugins-good
   * plugins-bad
@@ -56,12 +57,13 @@ Finally for the changes to take effect restart PulseAudio with below command or 
 ```
 pulseaudio -k
 ```
+
 ## To do
-- [X] Implement desktop recording into nodejs via gstreamer1
+- [X] Implement desktop recording using GNOME Shell.Recorder
 - [X] Audio support
 - [X] Video scaling
 - [X] Add video bitrate and fps setting
 - [X] Use HLS instead of piped stream
 - [X] Auto switching of audio sink
 - [ ] Hardware acceleration (vaapi/nvenc)
-- [ ] Wayland support
+- [X] Wayland support
