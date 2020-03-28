@@ -5,10 +5,8 @@
   "name": "Cast to TV - Desktop Stream Add-on", 
   "settings-schema": "org.gnome.shell.extensions.cast-to-tv-desktop-addon", 
   "shell-version": [
-    "3.26", 
-    "3.28", 
-    "3.30", 
-    "3.32"
+    "3.34", 
+    "3.36"
   ], 
   "url": "https://github.com/Rafostar/cast-to-tv-desktop-addon", 
   "uuid": "cast-to-tv-desktop-addon@rafostar.github.com", 
