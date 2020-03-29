@@ -138,28 +138,20 @@ class CastDesktopRecorder extends Shell.Recorder
 
 		let pipe = [
 			/* Video Pipe */
-			'x264enc',  // gst-plugins-ugly
+			'x264enc', // gst-plugins-ugly
 			'sliced-threads=true',
 			'tune=zerolatency',
 			'speed-preset=superfast',
 			'bitrate=' + videoParams.mbps * 1000,
-			'key-int-max=' + videoParams.fps, // keyframe in every segment
+			'key-int-max=' + Math.floor(videoParams.fps / 2),
 			'!',
 			'h264parse', // gst-plugins-bad
 			'!',
 			'video/x-h264,profile=main',
 			'!',
-			'mpegtsmux', // gst-plugins-bad
-			'name=mux',
+			'queue',
 			'!',
-			'hlssink', // gst-plugins-bad
-			'async-handling=true',
-			'location=' + this._imports.shared.hlsDir + '/segment%05d.ts',
-			'playlist-location=' + this._imports.shared.hlsDir + '/playlist.m3u8',
-			'target-duration=1',
-			'playlist-length=3',
-			'max-files=10',
-
+			'hlsmux.',
 			/* Audio Pipe */
 			'pulsesrc', // gst-plugins-good
 			'device=cast_to_tv.monitor',
@@ -189,9 +181,20 @@ class CastDesktopRecorder extends Shell.Recorder
 */
 			'fdkaacenc', // gst-plugins-bad
 			'hard-resync=true',
-
 			'!',
-			'mux.'
+			'queue',
+			'!',
+			'hlsmux.',
+			'mpegtsmux', // gst-plugins-bad
+			'name=hlsmux',
+			'!',
+			'hlssink', // gst-plugins-bad
+			'async-handling=true',
+			'location=' + this._imports.shared.hlsDir + '/segment%05d.ts',
+			'playlist-location=' + this._imports.shared.hlsDir + '/playlist.m3u8',
+			'target-duration=1',
+			'playlist-length=3',
+			'max-files=10'
 		];
 
 		/* Screen exceeds max Chromecast resolution */
