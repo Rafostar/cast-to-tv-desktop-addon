@@ -33,6 +33,7 @@ module.exports =
 				return res.sendStatus(404);
 			}
 
+			debug('Send HLS playlist file');
 			return res.sendFile(PLAYLIST_PATH);
 		});
 	},
