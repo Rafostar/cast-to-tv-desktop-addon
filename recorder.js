@@ -16,7 +16,7 @@ const PACMD_PROPS = [
 	'device.description="Wireless Display" device.icon_name="video-display"'
 ];
 
-let prevSource = 'unknown';
+let prevSource;
 
 var CastDesktopRecorder = GObject.registerClass(
 class CastDesktopRecorder extends Shell.Recorder
@@ -80,7 +80,7 @@ class CastDesktopRecorder extends Shell.Recorder
 		if(!success || !this.is_recording())
 		{
 			this._addonNotify('Could not start desktop recording');
-			return this.stopRecord();
+			return this._finishStopRecord();
 		}
 
 		Indicator.visible = true;
@@ -89,7 +89,7 @@ class CastDesktopRecorder extends Shell.Recorder
 		GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT, 5, () =>
 		{
 			if(!this.is_recording() || this.destroyed)
-				return this.stopRecord();
+				return this._finishStopRecord();
 
 			let selection = {
 				addon: 'DESKTOP',
@@ -109,8 +109,14 @@ class CastDesktopRecorder extends Shell.Recorder
 	stopRecord()
 	{
 		if(this.is_recording())
+		{
 			this.close();
+			this._finishStopRecord();
+		}
+	}
 
+	_finishStopRecord()
+	{
 		this._restoreAudioSink(hadErr =>
 		{
 			if(hadErr) log('Cast to TV: cannot restore previous audio device');
@@ -272,6 +278,9 @@ class CastDesktopRecorder extends Shell.Recorder
 
 	_restoreAudioSink(cb)
 	{
+		if(!prevSource)
+			return cb(null);
+
 		this._pacmdSpawn(['unload-module', 'module-null-sink'], (hadErr) =>
 		{
 			if(hadErr) return cb(hadErr);
