@@ -13,17 +13,24 @@ class CastDesktopMenuItem extends PopupMenu.PopupImageMenuItem
 		super._init(_("Desktop"), 'preferences-desktop-remote-desktop-symbolic');
 		this.isDesktopStream = true;
 
-		let recorder = new CastDesktopRecorder(mainImports);
+		this.castRecorder = new CastDesktopRecorder(mainImports);
 		this._activateSignal = this.connect('activate', () =>
 		{
-			(recorder.is_recording()) ?
-				recorder.stopRecord() : recorder.startRecord();
+			(this.castRecorder.is_recording()) ?
+				this.castRecorder.stopRecord() : this.castRecorder.startRecord();
 		});
+	}
+
+	_onCastStop()
+	{
+		this.castRecorder.stopRecord();
 	}
 
 	destroy()
 	{
 		this.disconnect(this._activateSignal);
+		this.castRecorder.destroy();
+
 		super.destroy();
 	}
 });
