@@ -50,16 +50,16 @@ class DesktopSettings extends Gtk.Grid
 		label = new SettingLabel(_("Bitrate (Mbps)"));
 		widget = new Gtk.SpinButton({halign:Gtk.Align.END, digits:1});
 		widget.set_range(1.0, 10.0);
-		widget.set_value(Settings.get_double('video-bitrate'));
+		widget.set_value(Settings.get_double('bitrate'));
 		widget.set_increments(0.1, 0.2);
-		Settings.bind('video-bitrate', widget, 'value', Gio.SettingsBindFlags.DEFAULT);
+		Settings.bind('bitrate', widget, 'value', Gio.SettingsBindFlags.DEFAULT);
 		addToGrid(this, label, widget);
 
 		/* Draw Cursor */
 		label = new SettingLabel(_("Show cursor"));
 		widget = new Gtk.Switch({halign:Gtk.Align.END});
-		widget.set_active(Settings.get_boolean('draw-cursor'));
-		Settings.bind('draw-cursor', widget, 'active', Gio.SettingsBindFlags.DEFAULT);
+		widget.set_active(Settings.get_boolean('cursor'));
+		Settings.bind('cursor', widget, 'active', Gio.SettingsBindFlags.DEFAULT);
 		addToGrid(this, label, widget);
 	}
 });

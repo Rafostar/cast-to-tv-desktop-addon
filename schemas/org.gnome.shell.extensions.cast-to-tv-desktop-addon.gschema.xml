@@ -4,11 +4,11 @@
       <default>30</default>
       <summary>Video recording FPS</summary>
     </key>
-    <key name="video-bitrate" type="d">
+    <key name="bitrate" type="d">
       <default>2.0</default>
       <summary>Video encoding bitrate</summary>
     </key>
-    <key name="draw-cursor" type="b">
+    <key name="cursor" type="b">
       <default>true</default>
       <summary>Show cursor on recording</summary>
     </key>

@@ -3,8 +3,10 @@ const Main = imports.ui.main;
 const AggregateMenu = Main.panel.statusArea.aggregateMenu;
 const Indicator = AggregateMenu._screencast._indicator;
 const Local = imports.misc.extensionUtils.getCurrentExtension();
+const Pipe = Local.imports.pipe;
 const Gettext = imports.gettext.domain(Local.metadata['gettext-domain']);
 const _ = Gettext.gettext;
+const noop = () => {};
 
 /* TRANSLATORS: Title of the stream, shown on Chromecast and GNOME remote widget */
 const TITLE = _("Desktop Stream");
@@ -33,6 +35,12 @@ class CastDesktopRecorder extends Shell.Recorder
 			Local.path, Local.metadata['settings-schema']
 		);
 
+		this.recordCfg = {
+			framerate: this._settings.get_int('framerate'),
+			bitrate: this._settings.get_double('bitrate').toFixed(1),
+			cursor: this._settings.get_boolean('cursor')
+		};
+
 		this._updatePipeConfig();
 	}
 
@@ -55,7 +63,7 @@ class CastDesktopRecorder extends Shell.Recorder
 				this._setSink(hadErr =>
 				{
 					if(hadErr)
-						return log('Cast to TV: set audio sink error');
+						return this._logInfo('set audio sink error');
 
 					this._finishStartRecord();
 				});
@@ -65,7 +73,7 @@ class CastDesktopRecorder extends Shell.Recorder
 				this._prepareCast(hadErr =>
 				{
 					if(hadErr)
-						return log('Cast to TV: prepare desktop cast error');
+						return this._logInfo('prepare desktop cast error');
 
 					this._finishStartRecord();
 				});
@@ -106,20 +114,27 @@ class CastDesktopRecorder extends Shell.Recorder
 		});
 	}
 
-	stopRecord()
+	stopRecord(cb)
 	{
-		if(this.is_recording())
-		{
-			this.close();
-			this._finishStopRecord();
-		}
+		cb = cb || noop;
+
+		if(!this.is_recording())
+			return cb(null);
+
+		this.close();
+		this._finishStopRecord(cb);
 	}
 
-	_finishStopRecord()
+	_finishStopRecord(cb)
 	{
+		cb = cb || noop;
+
 		this._restoreAudioSink(hadErr =>
 		{
-			if(hadErr) log('Cast to TV: cannot restore previous audio device');
+			if(hadErr)
+				this._logInfo('cannot restore previous audio device');
+
+			return cb(hadErr);
 		});
 
 		Indicator.visible = false;
@@ -127,103 +142,19 @@ class CastDesktopRecorder extends Shell.Recorder
 
 	_updatePipeConfig()
 	{
-		/* To do: Should be updated with signal connections */
-		let videoParams = {};
+		this.set_framerate(this.recordCfg.framerate);
+		this.set_draw_cursor(this.recordCfg.cursor);
 
-		videoParams.fps = this._settings.get_int('framerate');
-		videoParams.mbps = this._settings.get_double('video-bitrate').toFixed(1);
-
-		this.set_framerate(videoParams.fps);
-		this.set_draw_cursor(this._settings.get_boolean('draw-cursor'));
-
-		let pipe = [
-			/* Video Pipe */
-			'x264enc', // gst-plugins-ugly
-			'sliced-threads=true',
-			'tune=zerolatency',
-			'speed-preset=superfast',
-			'bitrate=' + videoParams.mbps * 1000,
-			'key-int-max=' + Math.floor(videoParams.fps / 2),
-			'!',
-			'h264parse', // gst-plugins-bad
-			'!',
-			'video/x-h264,profile=main',
-			'!',
-			'queue',
-			'!',
-			'hlsmux.',
-			/* Audio Pipe */
-			'pulsesrc', // gst-plugins-good
-			'device=cast_to_tv.monitor',
-			'provide-clock=true',
-			'do-timestamp=true',
-			'buffer-time=40000',
-			'!',
-			'queue',
-			'leaky=2',
-			'max-size-buffers=0',
-			'max-size-time=0',
-			'max-size-bytes=0',
-			'!',
-			'audiorate', // gst-plugins-base
-			'skip-to-first=true',
-			'!',
-			'audio/x-raw,channels=2',
-			'!',
-			'audioconvert', // gst-plugins-base
-			'!',
-			'queue',
-			'!',
-/*
-			'faac', // gst-plugins-bad
-			'midside=false',
-			'tns=true',
-*/
-			'fdkaacenc', // gst-plugins-bad
-			'hard-resync=true',
-			'!',
-			'queue',
-			'!',
-			'hlsmux.',
-			'mpegtsmux', // gst-plugins-bad
-			'name=hlsmux',
-			'!',
-			'hlssink', // gst-plugins-bad
-			'async-handling=true',
-			'location=' + this._imports.shared.hlsDir + '/segment%05d.ts',
-			'playlist-location=' + this._imports.shared.hlsDir + '/playlist.m3u8',
-			'target-duration=1',
-			'playlist-length=3',
-			'max-files=10'
-		];
-
-		/* Screen exceeds max Chromecast resolution */
-		if(global.screen_width > 1920 || global.screen_height > 1080)
-		{
-			let reduction;
-			let width = 1920;
-			let height = 1080;
-
-			if(global.screen_width > 1920)
-			{
-				reduction = global.screen_width / 1920;
-				height = Math.floor(global.screen_height / reduction);
-			}
-			else
-			{
-				reduction = global.screen_height / 1080;
-				width = Math.floor(global.screen_width / reduction);
-			}
-
-			pipe.unshift(
-				'videoscale',
-				'!',
-				'video/x-raw,width=' + width + ',height=' + height,
-				'!',
-				'queue',
-				'!'
-			);
-		}
+		let pipe = Pipe.getPipe({
+			threads: '%T',
+			framerate: this.recordCfg.framerate,
+			bitrate: this.recordCfg.bitrate * 1000,
+			width: global.screen_width,
+			height: global.screen_height,
+			soundSrc: 'cast_to_tv.monitor',
+			audioEnc: 'fdkaacenc',
+			hlsDir: this._imports.shared.hlsDir
+		});
 
 		this.set_pipeline(pipe.join(' '));
 	}
@@ -337,9 +268,14 @@ class CastDesktopRecorder extends Shell.Recorder
 		cb(sinks);
 	}
 
+	_logInfo(info)
+	{
+		log('Cast to TV: ' + info);
+	}
+
 	destroy()
 	{
-		this.stopRecord();
+		this.stopRecord(() => prevSource = null);
 		this.destroyed = true;
 	}
 });
