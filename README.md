@@ -58,6 +58,19 @@ Finally for the changes to take effect restart PulseAudio with below command or 
 pulseaudio -k
 ```
 
+## GStreamer pipeline
+<p align="center">
+<img src="https://raw.githubusercontent.com/Rafostar/cast-to-tv-desktop-addon/master/test/pipeline.png">
+</p>
+
+Above graph shows currently used GStreamer pipeline during streaming.
+
+Please note that GNOME Shell does not let you see or edit video capture part (besides only few options), so the beggining of video stream shown here was replaced with `VideoTestSrc + CapsFilter`.
+
+`VideoRate` element is required, because GNOME Recorder uses variable framerate for screen capture which Chromecast does not like.
+
+`MultiQueue` element for all branches is recommended for h264 encoding according to [GStreamer docs](https://gstreamer.freedesktop.org/documentation/x264/index.html).
+
 ## To do
 - [X] Implement desktop recording using GNOME Shell.Recorder
 - [X] Audio support
