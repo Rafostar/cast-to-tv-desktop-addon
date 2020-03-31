@@ -88,8 +88,8 @@ function getPipe(opts)
 		'location=' + opts.hlsDir + '/segment%05d.ts',
 		'playlist-location=' + opts.hlsDir + '/playlist.m3u8',
 		'target-duration=1',
-		'playlist-length=5',
-		'max-files=10'
+		'playlist-length=10',
+		'max-files=20'
 	);
 
 	opts.width = opts.width || 1920;
