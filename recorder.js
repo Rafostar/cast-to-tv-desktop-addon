@@ -249,11 +249,15 @@ class CastDesktopRecorder extends Shell.Recorder
 		if(!prevSource)
 			return cb(null);
 
-		this._pacmdSpawn(['unload-module', 'module-null-sink'], (hadErr) =>
+		/* Wait for recording to stop */
+		GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT, 2, () =>
 		{
-			if(hadErr) return cb(hadErr);
+			this._pacmdSpawn(['unload-module', 'module-null-sink'], (hadErr) =>
+			{
+				if(hadErr) return cb(hadErr);
 
-			this._pacmdSpawn(['set-default-sink', prevSource], cb);
+				this._pacmdSpawn(['set-default-sink', prevSource], cb);
+			});
 		});
 	}
 
