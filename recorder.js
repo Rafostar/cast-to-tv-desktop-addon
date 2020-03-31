@@ -131,7 +131,10 @@ class CastDesktopRecorder extends Shell.Recorder
 		GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT, 5, () =>
 		{
 			if(!this.is_recording() || this.destroyed)
+			{
+				this._addonNotify('Could not start desktop recording');
 				return this._finishStopRecord();
+			}
 
 			let selection = {
 				addon: 'DESKTOP',
