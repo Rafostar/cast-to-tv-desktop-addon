@@ -18,9 +18,6 @@ function getPipe(opts)
 		'!',
 		'video/x-h264,profile=main,framerate=' + opts.framerate + '/1',
 		'!',
-		'h264parse', // gst-plugins-bad
-		'config-interval=-1',
-		'!',
 		'mqueue.sink_0',
 		/* Audio Pipe */
 		'pulsesrc', // gst-plugins-good
@@ -65,16 +62,23 @@ function getPipe(opts)
 
 	pipe.push(
 		'!',
-		'aacparse', // gst-plugins-good
-		'!',
-		'mqueue.sink_1',
 		'multiqueue',
 		'name=mqueue',
 		'!',
-		'tsmux.sink_0',
+		'aparse.',
 		'mqueue.src_1',
 		'!',
-		'tsmux.sink_1',
+		'vparse.',
+		'mqueue.src_0',
+		'!',
+		'h264parse', // gst-plugins-bad
+		'name=vparse',
+		'config-interval=-1',
+		'!',
+		'tsmux.',
+		'aacparse', // gst-plugins-good
+		'name=aparse',
+		'!',
 		'mpegtsmux', // gst-plugins-bad
 		'alignment=7',
 		'name=tsmux',
