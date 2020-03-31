@@ -16,7 +16,7 @@ function getPipe(opts)
 		'speed-preset=superfast',
 		'bitrate=' + opts.bitrate,
 		'!',
-		'video/x-h264,profile=main,framerate=' + opts.framerate + '/1',
+		'video/x-h264,profile=main',
 		'!',
 		'mqueue.sink_0',
 		/* Audio Pipe */
@@ -26,20 +26,10 @@ function getPipe(opts)
 		'do-timestamp=true',
 		'buffer-time=40000',
 		'!',
-		'queue',
-		'leaky=2',
-		'max-size-buffers=0',
-		'max-size-time=0',
-		'max-size-bytes=0',
-		'!',
 		'audiorate', // gst-plugins-base
 		'skip-to-first=true',
 		'!',
 		'audio/x-raw,channels=2',
-		'!',
-		'audioconvert', // gst-plugins-base
-		'!',
-		'queue',
 		'!'
 	];
 
@@ -116,8 +106,6 @@ function getPipe(opts)
 			'videoscale',
 			'!',
 			'video/x-raw,width=' + width + ',height=' + height,
-			'!',
-			'queue',
 			'!'
 		);
 	}
