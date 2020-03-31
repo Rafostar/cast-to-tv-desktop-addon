@@ -38,8 +38,42 @@ class CastDesktopRecorder extends Shell.Recorder
 		this.recordCfg = {
 			framerate: this._settings.get_int('framerate'),
 			bitrate: this._settings.get_double('bitrate').toFixed(1),
+			encoder: this._settings.get_string('encoder'),
 			cursor: this._settings.get_boolean('cursor')
 		};
+		this._updatePipeConfig();
+
+		this._signalIds = [];
+		let signals = {
+			string: ['encoder'],
+			int: ['framerate'],
+			double: ['bitrate'],
+			boolean: ['cursor']
+		};
+
+		for(let type in signals)
+		{
+			for(let setting of signals[type])
+				this._connectSignal(setting, type);
+		}
+	}
+
+	_connectSignal(setting, type)
+	{
+		this._signalIds.push(
+			this._settings.connect(
+				'changed::' + setting,
+				this._updateSetting.bind(this, setting, type)
+			)
+		);
+	}
+
+	_updateSetting(setting, type)
+	{
+		this.recordCfg[setting] = this._settings['get_' + type](setting);
+
+		if(type === 'double')
+			this.recordCfg[setting] = this.recordCfg[setting].toFixed(1);
 
 		this._updatePipeConfig();
 	}
@@ -152,7 +186,7 @@ class CastDesktopRecorder extends Shell.Recorder
 			width: global.screen_width,
 			height: global.screen_height,
 			soundSrc: 'cast_to_tv.monitor',
-			audioEnc: 'fdkaacenc',
+			audioEnc: this.recordCfg.encoder,
 			hlsDir: this._imports.shared.hlsDir
 		});
 
@@ -277,5 +311,9 @@ class CastDesktopRecorder extends Shell.Recorder
 	{
 		this.stopRecord(() => prevSource = null);
 		this.destroyed = true;
+
+		this._signalIds.forEach(signalId =>
+			this._settings.disconnect(signalId)
+		);
 	}
 });

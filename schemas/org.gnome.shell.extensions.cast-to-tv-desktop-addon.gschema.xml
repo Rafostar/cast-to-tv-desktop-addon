@@ -8,7 +8,7 @@
       <default>2.0</default>
       <summary>Video encoding bitrate</summary>
     </key>
-    <key name="audio-encoder" type="s">
+    <key name="encoder" type="s">
       <default>"fdkaacenc"</default>
       <summary>GStreamer audio encoder used for recording</summary>
     </key>

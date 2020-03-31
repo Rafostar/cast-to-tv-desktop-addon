@@ -60,7 +60,7 @@ class DesktopSettings extends Gtk.Grid
 		widget = new Gtk.ComboBoxText({halign:Gtk.Align.END});
 		widget.append('fdkaacenc', "FDK AAC");
 		widget.append('faac', "FAAC");
-		Settings.bind('audio-encoder', widget, 'active-id', Gio.SettingsBindFlags.DEFAULT);
+		Settings.bind('encoder', widget, 'active-id', Gio.SettingsBindFlags.DEFAULT);
 		addToGrid(this, label, widget);
 
 		/* Draw Cursor */
