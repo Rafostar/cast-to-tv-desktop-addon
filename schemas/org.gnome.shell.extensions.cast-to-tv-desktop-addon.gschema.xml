@@ -1,5 +1,9 @@
 <schemalist gettext-domain="cast-to-tv-desktop-addon">
   <schema id="org.gnome.shell.extensions.cast-to-tv-desktop-addon" path="/org/gnome/shell/extensions/cast-to-tv-desktop-addon/">
+     <key name="port" type="i">
+      <default>4007</default>
+      <summary>TCP server listening port</summary>
+    </key>
     <key name="framerate" type="i">
       <default>30</default>
       <summary>Video recording FPS</summary>
@@ -12,21 +16,21 @@
       <default>"fdkaacenc"</default>
       <summary>GStreamer audio encoder used for recording</summary>
     </key>
-    <key name="cursor" type="b">
-      <default>true</default>
-      <summary>Show cursor on recording</summary>
+    <key name="hwenc" type="s">
+      <default>"none"</default>
+      <summary>Hardware accelerated encoding</summary>
     </key>
     <key name="audio" type="b">
       <default>true</default>
       <summary>Stream with audio</summary>
     </key>
+    <key name="cursor" type="b">
+      <default>true</default>
+      <summary>Show cursor on recording</summary>
+    </key>
     <key name="hls" type="b">
       <default>false</default>
       <summary>Use HLS streaming</summary>
-    </key>
-    <key name="hwenc" type="s">
-      <default>"none"</default>
-      <summary>Hardware accelerated encoding</summary>
     </key>
   </schema>
 </schemalist>

@@ -42,14 +42,15 @@ class CastDesktopRecorder extends Shell.Recorder
 			hwenc: this._settings.get_string('hwenc'),
 			cursor: this._settings.get_boolean('cursor'),
 			audio: this._settings.get_boolean('audio'),
-			hls: this._settings.get_boolean('hls')
+			hls: this._settings.get_boolean('hls'),
+			port: this._settings.get_int('port')
 		};
 		this._updatePipeConfig();
 
 		this._signalIds = [];
 		let signals = {
 			string: ['encoder', 'hwenc'],
-			int: ['framerate'],
+			int: ['framerate', 'port'],
 			double: ['bitrate'],
 			boolean: ['cursor', 'audio', 'hls']
 		};
@@ -202,7 +203,8 @@ class CastDesktopRecorder extends Shell.Recorder
 			audioEnc: this.recordCfg.encoder,
 			videoEnc: this.recordCfg.hwenc,
 			hlsStream: this.recordCfg.hls,
-			hlsDir: this._imports.shared.hlsDir
+			hlsDir: this._imports.shared.hlsDir,
+			port: this.recordCfg.port
 		});
 
 		this.set_pipeline(pipe.join(' '));

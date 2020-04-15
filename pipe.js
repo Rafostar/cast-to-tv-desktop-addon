@@ -164,7 +164,7 @@ function getPipe(opts)
 			/* TCP Server Out */
 			'tcpserversink',
 			'host=127.0.0.1',
-			'port=4007',
+			'port=' + opts.port,
 			'sync=false', // reduces delay
 			'sync-method=burst-keyframe',
 			'burst-format=default',

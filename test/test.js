@@ -16,7 +16,8 @@ let opts = {
 	audioEnc: ARGV[1] || 'fdkaacenc',
 	videoEnc: 'none',
 	hlsStream: false,
-	hlsDir: '/tmp/hls_test'
+	hlsDir: '/tmp/hls_test',
+	port: 4007
 };
 let loop = GLib.MainLoop.new(null, false);
 

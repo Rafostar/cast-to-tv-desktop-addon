@@ -37,6 +37,15 @@ class DesktopSettings extends Gtk.Grid
 		label = new SettingLabel(_("Desktop Options"), true);
 		addToGrid(this, label, null, true);
 
+		/* TCP Port */
+		label = new SettingLabel(_("TCP Port"));
+		widget = new Gtk.SpinButton({halign:Gtk.Align.END});
+		widget.set_range(1024, 65535);
+		widget.set_value(Settings.get_int('port'));
+		widget.set_increments(1, 2);
+		Settings.bind('port', widget, 'value', Gio.SettingsBindFlags.DEFAULT);
+		addToGrid(this, label, widget);
+
 		/* Recording FPS */
 		label = new SettingLabel(_("Video FPS"));
 		widget = new Gtk.SpinButton({halign:Gtk.Align.END});
