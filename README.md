@@ -8,10 +8,10 @@ Desktop streaming support for GNOME Shell Extension Cast to TV.
   * Streams with audio
   * Works on Wayland
   * Customizable video bitrate and fps
+  * Hardware acceleration
   * Option to show/hide mouse cursor
 * Cons:
-  * High delay
-  * High cpu usage (no hardware acceleration yet)
+  * Higher delay
 
 ## Requirements
 * [Cast to TV](https://github.com/Rafostar/gnome-shell-extension-cast-to-tv) (latest git master)
@@ -23,13 +23,21 @@ Desktop streaming support for GNOME Shell Extension Cast to TV.
 
 Desktop streaming uses `PulseAudio` to capture sound and `pacmd` to alter its configuration, so your system must be using them (most Linux distros do by default).
 
+If you want to use `VAAPI` hardware acceleration, you have to additionally install `gstreamer1-vaapi` plugins. Nvidia hardware acceleration is included as part of `plugins-bad` package.
+
+Remember to select correct AAC plugin in extension preferences. Some linux distros use `fdkaac` while other `faac`. You can check which one you have from terminal using `gst-inspect-1.0`:
+```
+gst-inspect-1.0 fdkaac
+gst-inspect-1.0 faac
+```
+
 ### Fedora
 Having enabled rpm fusion repos run:
 ```
-sudo dnf install gstreamer1 gstreamer1-plugins-{base,good,bad-free,ugly}
+sudo dnf install gstreamer1-plugins-{base,good,bad-free,ugly}
 ```
 
-## Installation
+## Installation from Git
 ```
 cd /tmp
 git clone https://github.com/Rafostar/cast-to-tv-desktop-addon.git
@@ -76,7 +84,8 @@ Please note that GNOME Shell does not let you see or edit video capture part (be
 - [X] Audio support
 - [X] Video scaling
 - [X] Add video bitrate and fps setting
-- [X] Use HLS instead of piped stream
+- [X] Support HLS and TCP stream
 - [X] Auto switching of audio sink
-- [ ] Hardware acceleration (vaapi/nvenc)
+- [X] Hardware acceleration (vaapi/nvenc)
 - [X] Wayland support
+- [ ] Native audio sink selection in GJS

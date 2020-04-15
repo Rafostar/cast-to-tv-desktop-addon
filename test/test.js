@@ -14,6 +14,7 @@ let opts = {
 	enableAudio: true,
 	soundSrc: SOUND_SRC,
 	audioEnc: ARGV[1] || 'fdkaacenc',
+	videoEnc: 'none',
 	hlsStream: false,
 	hlsDir: '/tmp/hls_test'
 };
