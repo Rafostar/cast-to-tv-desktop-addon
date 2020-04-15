@@ -37,6 +37,15 @@ class DesktopSettings extends Gtk.Grid
 		label = new SettingLabel(_("Desktop Options"), true);
 		addToGrid(this, label, null, true);
 
+		/* Hardware Acceleration */
+		label = new SettingLabel(_("Hardware acceleration"));
+		widget = new Gtk.ComboBoxText({halign:Gtk.Align.END});
+		widget.append('none', _("None"));
+		widget.append('vaapi', "VAAPI");
+		widget.append('nvenc', "NVENC");
+		Settings.bind('hwenc', widget, 'active-id', Gio.SettingsBindFlags.DEFAULT);
+		addToGrid(this, label, widget);
+
 		/* TCP Port */
 		label = new SettingLabel(_("TCP Port"));
 		widget = new Gtk.SpinButton({halign:Gtk.Align.END});
@@ -70,15 +79,6 @@ class DesktopSettings extends Gtk.Grid
 		widget.append('fdkaacenc', "FDK AAC");
 		widget.append('faac', "FAAC");
 		Settings.bind('encoder', widget, 'active-id', Gio.SettingsBindFlags.DEFAULT);
-		addToGrid(this, label, widget);
-
-		/* Hardware Acceleration */
-		label = new SettingLabel(_("Hardware acceleration"));
-		widget = new Gtk.ComboBoxText({halign:Gtk.Align.END});
-		widget.append('none', _("None"));
-		widget.append('vaapi', "VAAPI");
-		widget.append('nvenc', "NVENC");
-		Settings.bind('hwenc', widget, 'active-id', Gio.SettingsBindFlags.DEFAULT);
 		addToGrid(this, label, widget);
 
 		/* Stream with Audio */
