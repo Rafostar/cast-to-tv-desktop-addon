@@ -39,6 +39,7 @@ class CastDesktopRecorder extends Shell.Recorder
 			framerate: this._settings.get_int('framerate'),
 			bitrate: this._settings.get_double('bitrate').toFixed(1),
 			encoder: this._settings.get_string('encoder'),
+			hwenc: this._settings.get_string('hwenc'),
 			cursor: this._settings.get_boolean('cursor'),
 			audio: this._settings.get_boolean('audio'),
 			hls: this._settings.get_boolean('hls')
@@ -47,7 +48,7 @@ class CastDesktopRecorder extends Shell.Recorder
 
 		this._signalIds = [];
 		let signals = {
-			string: ['encoder'],
+			string: ['encoder', 'hwenc'],
 			int: ['framerate'],
 			double: ['bitrate'],
 			boolean: ['cursor', 'audio', 'hls']
@@ -199,6 +200,7 @@ class CastDesktopRecorder extends Shell.Recorder
 			enableAudio: this.recordCfg.audio,
 			soundSrc: 'cast_to_tv.monitor',
 			audioEnc: this.recordCfg.encoder,
+			videoEnc: this.recordCfg.hwenc,
 			hlsStream: this.recordCfg.hls,
 			hlsDir: this._imports.shared.hlsDir
 		});

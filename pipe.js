@@ -7,19 +7,46 @@ function getPipe(opts)
 		'!',
 		'video/x-raw,framerate=' + opts.framerate + '/1',
 		'!',
-		'x264enc', // gst-plugins-ugly
-		'threads=' + opts.threads,
-		'tune=zerolatency',
-		'sliced-threads=true',
-		'b-adapt=false',
-		'rc-lookahead=0',
-		'key-int-max=' + opts.framerate,
-		'speed-preset=superfast',
+	];
+
+	switch(opts.videoEnc)
+	{
+		case 'vaapi':
+			pipe.push(
+				'vaapih264enc', // gstreamer-vaapi
+				'rate-control=cbr',
+				'cabac=true',
+				'keyframe-period=' + opts.framerate
+			);
+			break;
+		case 'nvenc':
+			pipe.push(
+				'nvh264enc', // gst-plugins-bad
+				'preset=low-latency-hq',
+				'rc-mode=cbr'
+			);
+			break;
+		default:
+			pipe.push(
+				'x264enc', // gst-plugins-ugly
+				'threads=' + opts.threads,
+				'tune=zerolatency',
+				'cabac=true',
+				'sliced-threads=true',
+				'b-adapt=false',
+				'rc-lookahead=0',
+				'key-int-max=' + opts.framerate,
+				'speed-preset=superfast'
+			);
+			break;
+	}
+
+	pipe.push(
 		'bitrate=' + opts.bitrate,
 		'!',
 		'video/x-h264,profile=main',
 		'!'
-	];
+	);
 
 	if(opts.enableAudio)
 	{

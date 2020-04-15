@@ -24,5 +24,9 @@
       <default>false</default>
       <summary>Use HLS streaming</summary>
     </key>
+    <key name="hwenc" type="s">
+      <default>"none"</default>
+      <summary>Hardware accelerated encoding</summary>
+    </key>
   </schema>
 </schemalist>
