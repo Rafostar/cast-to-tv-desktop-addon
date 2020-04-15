@@ -9,6 +9,7 @@ function getPipe(opts)
 		'!',
 		'x264enc', // gst-plugins-ugly
 		'threads=' + opts.threads,
+		'tune=zerolatency',
 		'sliced-threads=true',
 		'b-adapt=false',
 		'rc-lookahead=0',
@@ -17,74 +18,145 @@ function getPipe(opts)
 		'bitrate=' + opts.bitrate,
 		'!',
 		'video/x-h264,profile=main',
-		'!',
-		'mqueue.sink_0',
-		/* Audio Pipe */
-		'pulsesrc', // gst-plugins-good
-		'device=' + opts.soundSrc,
-		'provide-clock=true',
-		'do-timestamp=true',
-		'buffer-time=40000',
-		'!',
-		'audiorate', // gst-plugins-base
-		'skip-to-first=true',
-		'!',
-		'audio/x-raw,channels=2',
 		'!'
 	];
 
-	switch(opts.audioEnc)
+	if(opts.enableAudio)
 	{
-		case 'faac':
-			pipe.push(
-				'faac', // gst-plugins-bad
-				'midside=false',
-				'tns=true'
-			);
-			break;
-		default:
-			pipe.push(
-				'fdkaacenc', // gst-plugins-bad
-				'hard-resync=true'
-			);
-			break;
+		pipe.push(
+			/* Video -> Multiqueue */
+			'mqueue.sink_0',
+			/* Audio Pipe */
+			'pulsesrc', // gst-plugins-good
+			'device=' + opts.soundSrc,
+			'provide-clock=true',
+			'do-timestamp=true',
+			'buffer-time=40000',
+			'!',
+			'queue',
+			'leaky=2',
+			'max-size-buffers=0',
+			'max-size-time=0',
+			'max-size-bytes=0',
+			'!',
+			'audiorate', // gst-plugins-base
+			'skip-to-first=true',
+			'!',
+			'audio/x-raw,channels=2',
+			'!'
+		);
+
+		/* Audio Encoder Selection */
+		switch(opts.audioEnc)
+		{
+			case 'faac':
+				pipe.push(
+					'faac', // gst-plugins-bad
+					'midside=false',
+					'tns=true'
+				);
+				break;
+			default:
+				pipe.push(
+					'fdkaacenc', // gst-plugins-bad
+					'hard-resync=true'
+				);
+				break;
+		}
+
+		pipe.push(
+			'!',
+			'multiqueue',
+			'name=mqueue',
+			'!',
+			/* Multiqueue Audio -> AAC Parse */
+			'aparse.',
+			'mqueue.src_1',
+			'!',
+			/* Multiqueue Video -> H264 Parse */
+			'vparse.',
+			'mqueue.src_0',
+			'!'
+		);
+	}
+	else
+	{
+		pipe.push(
+			'queue',
+			'!'
+		);
 	}
 
 	pipe.push(
-		'!',
-		'multiqueue',
-		'name=mqueue',
-		'!',
-		'aparse.',
-		'mqueue.src_1',
-		'!',
-		'vparse.',
-		'mqueue.src_0',
-		'!',
+		/* H264 Parse */
 		'h264parse', // gst-plugins-bad
 		'name=vparse',
 		'config-interval=-1',
-		'!',
-		'tsmux.',
-		'aacparse', // gst-plugins-good
-		'name=aparse',
-		'!',
-		'mpegtsmux', // gst-plugins-bad
-		'alignment=7',
-		'name=tsmux',
-		'!',
-		'hlssink', // gst-plugins-bad
-		'async-handling=true',
-		'location=' + opts.hlsDir + '/segment%05d.ts',
-		'playlist-location=' + opts.hlsDir + '/playlist.m3u8',
-		'target-duration=1',
-		'playlist-length=10',
-		'max-files=20'
+		'!'
 	);
+
+	if(opts.enableAudio)
+	{
+		pipe.push(
+			/* H264 Parse -> Mux */
+			'outmux.',
+			/* AAC Parse */
+			'aacparse', // gst-plugins-good
+			'name=aparse',
+			'!'
+			/* AAC Parse -> Mux */
+		);
+	}
+
+	if(opts.hlsStream)
+	{
+		pipe.push(
+			/* TS Mux */
+			'mpegtsmux', // gst-plugins-bad
+			'alignment=7',
+			'name=outmux',
+			'!',
+			/* HLS Output */
+			'hlssink', // gst-plugins-bad
+			'async-handling=true',
+			'location=' + opts.hlsDir + '/segment%05d.ts',
+			'playlist-location=' + opts.hlsDir + '/playlist.m3u8',
+			'target-duration=1',
+			'playlist-length=10',
+			'max-files=20'
+		);
+	}
+	else
+	{
+		pipe.push(
+			/* MKV Mux */
+			'matroskamux', // gst-plugins-good
+			'name=outmux',
+			'min-cluster-duration=0',
+			'!',
+			/* TCP Server Out */
+			'tcpserversink',
+			'host=127.0.0.1',
+			'port=4007',
+			'sync=false', // reduces delay
+			'sync-method=burst-keyframe',
+			'burst-format=default',
+			'recover-policy=latest',
+			'time-min=-1',
+			'blocksize=64',
+			'buffers-max=1',
+			'burst-value=1000',
+			'max-lateness=1',
+			'timeout=10000000000',
+			'units-max=64',
+			'units-soft-max=64'
+		);
+	}
 
 	opts.width = opts.width || 1920;
 	opts.height = opts.height || 1080;
 
+	/* FHD Downscale */
 	if(opts.width > 1920 || opts.height > 1080)
 	{
 		let reduction;

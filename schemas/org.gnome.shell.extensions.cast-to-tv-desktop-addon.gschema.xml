@@ -16,5 +16,13 @@
       <default>true</default>
       <summary>Show cursor on recording</summary>
     </key>
+    <key name="audio" type="b">
+      <default>true</default>
+      <summary>Stream with audio</summary>
+    </key>
+    <key name="hls" type="b">
+      <default>false</default>
+      <summary>Use HLS streaming</summary>
+    </key>
   </schema>
 </schemalist>

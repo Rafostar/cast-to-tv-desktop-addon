@@ -11,8 +11,10 @@ let opts = {
 	threads: 2,
 	framerate: 30,
 	bitrate: 2000,
+	enableAudio: true,
 	soundSrc: SOUND_SRC,
 	audioEnc: ARGV[1] || 'fdkaacenc',
+	hlsStream: false,
 	hlsDir: '/tmp/hls_test'
 };
 let loop = GLib.MainLoop.new(null, false);

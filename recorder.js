@@ -39,7 +39,9 @@ class CastDesktopRecorder extends Shell.Recorder
 			framerate: this._settings.get_int('framerate'),
 			bitrate: this._settings.get_double('bitrate').toFixed(1),
 			encoder: this._settings.get_string('encoder'),
-			cursor: this._settings.get_boolean('cursor')
+			cursor: this._settings.get_boolean('cursor'),
+			audio: this._settings.get_boolean('audio'),
+			hls: this._settings.get_boolean('hls')
 		};
 		this._updatePipeConfig();
 
@@ -48,7 +50,7 @@ class CastDesktopRecorder extends Shell.Recorder
 			string: ['encoder'],
 			int: ['framerate'],
 			double: ['bitrate'],
-			boolean: ['cursor']
+			boolean: ['cursor', 'audio', 'hls']
 		};
 
 		for(let type in signals)
@@ -81,6 +83,9 @@ class CastDesktopRecorder extends Shell.Recorder
 	startRecord()
 	{
 		this._imports.helper.createDir(this._imports.shared.hlsDir);
+
+		if(!this.recordCfg.audio)
+			return this._finishStartRecord();
 
 		this._getSinksAsync(sinks =>
 		{
@@ -132,7 +137,7 @@ class CastDesktopRecorder extends Shell.Recorder
 		{
 			if(!this.is_recording() || this.destroyed)
 			{
-				this._addonNotify('Could not start desktop recording');
+				this._addonNotify('Desktop recording closed unexpectedly');
 				return this._finishStopRecord();
 			}
 
@@ -140,7 +145,8 @@ class CastDesktopRecorder extends Shell.Recorder
 				addon: 'DESKTOP',
 				title: _(TITLE),
 				streamType: 'LIVE',
-				hlsStream: true,
+				hlsStream: this.recordCfg.hls,
+				maxLiveDelay: 7,
 				filePath: _(TITLE)
 			};
 
@@ -148,6 +154,8 @@ class CastDesktopRecorder extends Shell.Recorder
 				playlist: [ selection.filePath ],
 				selection: selection
 			});
+
+			return GLib.SOURCE_REMOVE;
 		});
 	}
 
@@ -188,8 +196,10 @@ class CastDesktopRecorder extends Shell.Recorder
 			bitrate: this.recordCfg.bitrate * 1000,
 			width: global.screen_width,
 			height: global.screen_height,
+			enableAudio: this.recordCfg.audio,
 			soundSrc: 'cast_to_tv.monitor',
 			audioEnc: this.recordCfg.encoder,
+			hlsStream: this.recordCfg.hls,
 			hlsDir: this._imports.shared.hlsDir
 		});
 
@@ -261,6 +271,8 @@ class CastDesktopRecorder extends Shell.Recorder
 
 				this._pacmdSpawn(['set-default-sink', prevSource], cb);
 			});
+
+			return GLib.SOURCE_REMOVE;
 		});
 	}
 

@@ -63,11 +63,18 @@ class DesktopSettings extends Gtk.Grid
 		Settings.bind('encoder', widget, 'active-id', Gio.SettingsBindFlags.DEFAULT);
 		addToGrid(this, label, widget);
 
-		/* Draw Cursor */
-		label = new SettingLabel(_("Show cursor"));
+		/* Stream with audio */
+		label = new SettingLabel(_("Stream with audio"));
 		widget = new Gtk.Switch({halign:Gtk.Align.END});
-		widget.set_active(Settings.get_boolean('cursor'));
-		Settings.bind('cursor', widget, 'active', Gio.SettingsBindFlags.DEFAULT);
+		widget.set_active(Settings.get_boolean('audio'));
+		Settings.bind('audio', widget, 'active', Gio.SettingsBindFlags.DEFAULT);
+		addToGrid(this, label, widget);
+
+		/* Use HLS */
+		label = new SettingLabel(_("Use HLS"));
+		widget = new Gtk.Switch({halign:Gtk.Align.END});
+		widget.set_active(Settings.get_boolean('hls'));
+		Settings.bind('hls', widget, 'active', Gio.SettingsBindFlags.DEFAULT);
 		addToGrid(this, label, widget);
 	}
 });
