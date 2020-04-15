@@ -50,7 +50,7 @@ After installing restart gnome-shell and **enable** the newly added extension us
 Go to `Cast Settings -> Modules` and click `Install npm modules` button.<br>
 This step will install additional packages and automatically restart Cast to TV server.
 
-### Audio fix
+## Audio fix
 In order to automatically switch audio output to the receiver, we need to alter PulseAudio default config a little.
 Open `/etc/pulse/default.pa` in any text editor as root and find line with:
 ```
@@ -65,6 +65,11 @@ Finally for the changes to take effect restart PulseAudio with below command or 
 ```
 pulseaudio -k
 ```
+
+## Hardware acceleration
+The add-on allows using either VAAPI (Intel/AMD) or NVENC (Nvidia) hardware accelerated recording (disabled by default).
+
+Unfortunately GStreamer implementation of both is kind of experimental state right now. Using it might crash your `gnome-shell` session. Please be warned. If you wish to try it anyway, you might need to enable it by adding `LIBVA_DRIVER_NAME=` with correct driver name and `GST_VAAPI_ALL_DRIVERS=1` to your `/etc/environment` (Intel/AMD), if you are on Nvidia check if your gstreamer build was compiled with `nvenc` support.
 
 ## GStreamer pipeline
 <p align="center">
