@@ -70,6 +70,13 @@ class DesktopSettings extends Gtk.Grid
 		Settings.bind('audio', widget, 'active', Gio.SettingsBindFlags.DEFAULT);
 		addToGrid(this, label, widget);
 
+		/* Draw cursor */
+		label = new SettingLabel(_("Draw cursor"));
+		widget = new Gtk.Switch({halign:Gtk.Align.END});
+		widget.set_active(Settings.get_boolean('cursor'));
+		Settings.bind('cursor', widget, 'active', Gio.SettingsBindFlags.DEFAULT);
+		addToGrid(this, label, widget);
+
 		/* Use HLS */
 		label = new SettingLabel(_("Use HLS"));
 		widget = new Gtk.Switch({halign:Gtk.Align.END});
