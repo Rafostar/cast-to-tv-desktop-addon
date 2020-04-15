@@ -63,6 +63,15 @@ class DesktopSettings extends Gtk.Grid
 		Settings.bind('encoder', widget, 'active-id', Gio.SettingsBindFlags.DEFAULT);
 		addToGrid(this, label, widget);
 
+		/* Hardware Acceleration */
+		label = new SettingLabel(_("Hardware acceleration"));
+		widget = new Gtk.ComboBoxText({halign:Gtk.Align.END});
+		widget.append('none', _("None"));
+		widget.append('vaapi', "VAAPI");
+		widget.append('nvenc', "NVENC");
+		Settings.bind('hwenc', widget, 'active-id', Gio.SettingsBindFlags.DEFAULT);
+		addToGrid(this, label, widget);
+
 		/* Stream with Audio */
 		label = new SettingLabel(_("Stream with audio"));
 		widget = new Gtk.Switch({halign:Gtk.Align.END});
@@ -82,15 +91,6 @@ class DesktopSettings extends Gtk.Grid
 		widget = new Gtk.Switch({halign:Gtk.Align.END});
 		widget.set_active(Settings.get_boolean('hls'));
 		Settings.bind('hls', widget, 'active', Gio.SettingsBindFlags.DEFAULT);
-		addToGrid(this, label, widget);
-
-		/* Hardware Acceleration */
-		label = new SettingLabel(_("Hardware acceleration"));
-		widget = new Gtk.ComboBoxText({halign:Gtk.Align.END});
-		widget.append('none', _("None"));
-		widget.append('vaapi', "VAAPI");
-		widget.append('nvenc', "NVENC");
-		Settings.bind('hwenc', widget, 'active-id', Gio.SettingsBindFlags.DEFAULT);
 		addToGrid(this, label, widget);
 	}
 });
