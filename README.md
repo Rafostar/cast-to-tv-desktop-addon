@@ -1,7 +1,5 @@
 # Cast to TV Desktop Stream Add-on
-Desktop streaming support for GNOME Shell Extension Cast to TV.
-
-### WORK IN PROGRESS. WORKS ONLY WITH LATEST CAST TO TV EXTENSION GIT MASTER!
+Desktop streaming support for GNOME Shell Extension Cast to TV v14+.
 
 ## Comparison with Chrome desktop streaming
 * Pros:
