@@ -83,12 +83,18 @@ function getPipe(opts)
 					'tns=true'
 				);
 				break;
+			case 'avenc_aac':
+				pipe.push(
+					'avenc_aac', // gst-plugins-libav/ffmpeg
+					'hard-resync=true'
+				);
+				break;				
 			case 'voaacenc':
 				pipe.push(
 					'voaacenc', // gst-plugins-bad
 					'hard-resync=true'
 				);
-				break;				
+				break;									
 			default:
 				pipe.push(
 					'fdkaacenc', // gst-plugins-bad
