@@ -83,6 +83,12 @@ function getPipe(opts)
 					'tns=true'
 				);
 				break;
+			case 'voaacenc':
+				pipe.push(
+					'voaacenc', // gst-plugins-bad
+					'hard-resync=true'
+				);
+				break;				
 			default:
 				pipe.push(
 					'fdkaacenc', // gst-plugins-bad
