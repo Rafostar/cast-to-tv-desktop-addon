@@ -23,10 +23,12 @@ Desktop streaming uses `PulseAudio` to capture sound and `pacmd` to alter its co
 
 If you want to use `VAAPI` hardware acceleration, you have to additionally install `gstreamer1-vaapi` plugins. Nvidia hardware acceleration is included as part of `plugins-bad` package.
 
-Remember to select correct AAC plugin in extension preferences. Some linux distros use `fdkaac` while other `faac`. You can check which one you have from terminal using `gst-inspect-1.0`:
+Remember to select correct AAC plugin in extension preferences. Support varies by Linux distro. You can check which one you have from terminal using `gst-inspect-1.0`:
 ```
 gst-inspect-1.0 fdkaac
 gst-inspect-1.0 faac
+gst-inspect-1.0 avenc_aac
+gst-inspect-1.0 voaacenc
 ```
 
 ### Fedora
