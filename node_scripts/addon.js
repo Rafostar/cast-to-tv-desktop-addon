@@ -41,7 +41,7 @@ module.exports =
 
 		var socket = net.createConnection({
 			host: '127.0.0.1',
-			port: 4007
+			port: selection.tcpPort
 		});
 
 		socket.setNoDelay(true);

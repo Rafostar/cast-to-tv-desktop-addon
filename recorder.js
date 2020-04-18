@@ -148,6 +148,7 @@ class CastDesktopRecorder extends Shell.Recorder
 				title: _(TITLE),
 				streamType: 'LIVE',
 				hlsStream: this.recordCfg.hls,
+				tcpPort: this.recordCfg.port,
 				maxLiveDelay: 7,
 				filePath: _(TITLE)
 			};
