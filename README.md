@@ -37,7 +37,11 @@ Having enabled rpm fusion repos run:
 sudo dnf install gstreamer1-plugins-{base,good,bad-free,ugly}
 ```
 
-## Installation from Git
+## Download
+
+[<img src="https://github.com/Rafostar/gnome-shell-extension-cast-to-tv/wiki/images/Gnome-Extensions.png" width="30%" height="30%">](https://extensions.gnome.org/extension/2977/cast-to-tv-desktop-stream-add-on)
+
+### Installation from source code
 ```
 cd /tmp
 git clone https://github.com/Rafostar/cast-to-tv-desktop-addon.git
