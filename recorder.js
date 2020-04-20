@@ -30,6 +30,7 @@ class CastDesktopRecorder extends Shell.Recorder
 			display: global.display
 		});
 
+		this.destroyed = false;
 		this._imports = mainImports;
 		this._settings = this._imports.helper.getSettings(
 			Local.path, Local.metadata['settings-schema']
