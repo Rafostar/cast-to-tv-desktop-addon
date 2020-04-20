@@ -12,7 +12,7 @@ Desktop streaming support for GNOME Shell Extension Cast to TV v14+.
   * Higher delay
 
 ## Requirements
-* [Cast to TV](https://github.com/Rafostar/gnome-shell-extension-cast-to-tv) (latest git master)
+* [Cast to TV](https://github.com/Rafostar/gnome-shell-extension-cast-to-tv) (v14+)
 * [GStreamer-1.0](https://gstreamer.freedesktop.org) plugins:
   * plugins-base
   * plugins-good
