@@ -100,26 +100,18 @@ class CastDesktopRecorder extends Shell.Recorder
 			let activeId = indexes.find(index => sinks[index].active === true);
 			prevSource = sinks[activeId].name;
 
-			if(isCastSink)
-			{
-				this._setSink(hadErr =>
-				{
-					if(hadErr)
-						return this._logInfo('set audio sink error');
+			let castFn = (isCastSink) ? '_setSink' : '_prepareCast';
+			let errText = (castFn === '_setSink')
+				? 'set audio sink error'
+				: 'prepare desktop cast error';
 
-					this._finishStartRecord();
-				});
-			}
-			else
+			this[castFn](hadErr =>
 			{
-				this._prepareCast(hadErr =>
-				{
-					if(hadErr)
-						return this._logInfo('prepare desktop cast error');
+				if(hadErr)
+					return this._logInfo(errText);
 
-					this._finishStartRecord();
-				});
-			}
+				this._finishStartRecord();
+			});
 		});
 	}
 
